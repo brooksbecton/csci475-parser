@@ -1,49 +1,48 @@
 """Used to parse text against lexemes"""
 import re
-"""Pulls in command line arguments"""
-import sys
 
 
 class Tokenizer:
     """Parses a custom language into tokens"""
 
+    # File to parse
     filename = ""
+
+    # Regexs used identify tokens we know about
     lookupTable = {
-        "INT": "int",  # the identifier
-        "FLOAT": "float",  # the identifier
-        "REAL": "(\d.\d)+",  # a floating point number
-        "INTEGER": "[\d]+",  # a whole number
-        "LSQB": "^\[$",  # [
-        "RSQB": "^\]$",  # ]
-        "EQUAL": "=",  # =
-        "TAB": "\t",  # \t
-        "NL": "\n",  # \n
-        "OP": "[-+=*/]",  # +/*/etc…
-        "LPAREN": "\(",  # (
-        "RPAREN": "\)",  # )
-        "LCURL": "\{",  # {
-        "RCURL": "\}",  # }
-        "IF": "if",  # if
-        "COMPARISON": "[=><(!=)(>=)(<=)(==)(===)(!==)]",  # all of them!
-        "ID": "^([_\w\d])+$",  # any variable
+        "INT": "int",
+        "FLOAT": "float",
+        "REAL": "(\d.\d)+",
+        "INTEGER": "[\d]+",
+        "LSQB": "^\[$",
+        "RSQB": "^\]$",
+        "EQUAL": "=",
+        "TAB": "\t",
+        "NL": "\n",
+        "OP": "[-+=*/]",
+        "LPAREN": "\(",
+        "RPAREN": "\)",
+        "LCURL": "\{",
+        "RCURL": "\}",
+        "IF": "if",
+        "COMPARISON": "[=><(!=)(>=)(<=)(==)(===)(!==)]",
+        "ID": "^([_\w\d])+$",
     }
 
     # Tokens that will use the symbol table
-    symbolTableTokens = [
+    symbol_table_tokens = [
         "ID",
         "INTEGER"
-            ]
+    ]
 
-    symbolTable = []
-    parsed_target_str = ""
+    # Holds found symbols
+    symbol_table = []
+
+    #string to parse
     target_str = ""
-    tokens = []
 
-    # def __init__(self):
-    # if(len(sys.argv) > 1):
-    #     self.filename = self.prompt_for_file_name()
-    #     target_strings = self.readfile(self.filename)
-    #     tokens = self.getTokens(target_strings)
+    # Holds found Tokens
+    tokens = []
 
     def get_token(self, test_str):
         for key in self.lookupTable:
@@ -53,10 +52,9 @@ class Tokenizer:
             if results:
                 # Removing string that has had a token found for it
                 self.target_str = self.target_str[len(results.group(0)):]
-                self.parsed_target_str += self.target_str[:len(results.group(0))]
 
-                if key in self.symbolTableTokens:
-                    symbol_table_id = self.putSymbolTableToken(results.group(0), key)
+                if key in self.symbol_table_tokens:
+                    symbol_table_id = self.put_symbol_table_token(results.group(0), key)
                     return '<' + key + ', ' + str(symbol_table_id) + '>'
                 elif key == "OP" or key == "EQUAL" or key == "COMPARISON":
                     return '<' + key + ', ' + results.group(0) + '>'
@@ -95,7 +93,7 @@ class Tokenizer:
                     if len(self.tokens) > 0 and self.isIdToken(self.tokens[-1]):
                         # Remove previous ID token because it is part of this
                         self.tokens.pop()
-                        self.symbolTable.pop()
+                        self.symbol_table.pop()
 
                         # Trying previous char preppended to this one
                         self.target_str = self.target_str[i - 1:i]
@@ -112,42 +110,52 @@ class Tokenizer:
             i += 1
             self.getTokens()
 
-    def isIdToken(self, potentialFuckingIdTokenTheSheerAudacityOfTheseSadisticBastardsIMeanFUCK):
-        return potentialFuckingIdTokenTheSheerAudacityOfTheseSadisticBastardsIMeanFUCK[:3] == "<ID"
+    def isIdToken(self, token):
+        return token[:3] == "<ID"
 
-    def putSymbolTableToken(self, token, token_type):
-        for index, symbol in enumerate(self.symbolTable):
+    def put_symbol_table_token(self, token, token_type):
+        for index, symbol in enumerate(self.symbol_table):
             if symbol[1] == token:
-                print(index)
                 return index
 
         new_token = [token_type, token]
-        self.symbolTable.append(new_token)
-        return len(self.symbolTable)-1
+        self.symbol_table.append(new_token)
+        return len(self.symbol_table)-1
 
-
-    def readfile(self, fname):
-        with open(fname) as target_file:
-            return target_file.readlines()
     def print_pretty_tokens(self):
-        for token in myT.tokens:
+        for token in self.tokens:
             if token == "<NL>":
                 print(str(token) + "\n")
             else:
                 print(token, end=" ")
         print("\n")
 
+    def print_pretty_symbol_table(self):
+        for index, symbol in enumerate(self.symbol_table):
+            if index % 3 >= 2:
+                print(str(symbol) + "\n")
+            else:
+                print(symbol, end=" ")
+        print("\n")
+
     def prompt_for_file_name(self):
         # self.filename = input("Enter File Name: ")
         return "sample-input.txt"
 
+    def readfile(self, fname):
+        with open(fname) as target_file:
+            return target_file.readlines()
 
-myT = Tokenizer()
+    def test_csci_475(self):
+        test_strings = self.readfile("sample-input.txt")
 
-test_strings = myT.readfile("sample-input.txt")
+        for test in test_strings:
+            self.target_str = test
+            self.getTokens()
 
-for test in test_strings:
-    myT.target_str = test
-    myT.getTokens()
-myT.print_pretty_tokens()
-print(myT.symbolTable)
+        self.print_pretty_tokens()
+        self.print_pretty_symbol_table()
+
+
+MR_T = Tokenizer()
+MR_T.test_csci_475()
