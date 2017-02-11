@@ -32,7 +32,7 @@ class Tokenizer:
     symbolTableTokens = [
         "ID",
         "INTEGER"
-    ]
+            ]
 
     symbolTable = []
     parsed_target_str = ""
@@ -115,28 +115,27 @@ class Tokenizer:
     def isIdToken(self, potentialFuckingIdTokenTheSheerAudacityOfTheseSadisticBastardsIMeanFUCK):
         return potentialFuckingIdTokenTheSheerAudacityOfTheseSadisticBastardsIMeanFUCK[:3] == "<ID"
 
-    def getSymbolTableToken(self):
-        print("isInSymbolTable")
-
     def putSymbolTableToken(self, token, token_type):
-        try:
-            return self.symbolTable.index(token)
-        except ValueError:
-            new_symbol = [token_type, token]
-            self.symbolTable.append(new_symbol)
-            return len(self.symbolTable)-1
+        for index, symbol in enumerate(self.symbolTable):
+            if symbol[1] == token:
+                print(index)
+                return index
+
+        new_token = [token_type, token]
+        self.symbolTable.append(new_token)
+        return len(self.symbolTable)-1
+
 
     def readfile(self, fname):
         with open(fname) as target_file:
             return target_file.readlines()
-   
     def print_pretty_tokens(self):
         for token in myT.tokens:
             if token == "<NL>":
                 print(str(token) + "\n")
             else:
                 print(token, end=" ")
-            print("\n")
+        print("\n")
 
     def prompt_for_file_name(self):
         # self.filename = input("Enter File Name: ")
@@ -148,8 +147,7 @@ myT = Tokenizer()
 test_strings = myT.readfile("sample-input.txt")
 
 for test in test_strings:
-    print(test)
     myT.target_str = test
     myT.getTokens()
-# myT.target_str = "\n"
-
+myT.print_pretty_tokens()
+print(myT.symbolTable)
