@@ -1,6 +1,6 @@
 """Used to parse text against lexemes"""
 import re
-
+import sys
 
 class Tokenizer:
     """Parses a custom language into tokens"""
@@ -113,7 +113,14 @@ class Tokenizer:
             self.getTokens()
 
     def get_tokens_from_file(self):
-        file = self.prompt_for_file_name()
+        print(len(sys.argv))
+        print(sys.argv)
+        if len(sys.argv) > 1:
+            if  sys.argv[1]:
+                file = sys.argv[1]
+        else:
+            file = self.prompt_for_file_name()
+
         test_strings = self.readfile(file)
 
         for test in test_strings:
