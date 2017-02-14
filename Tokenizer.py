@@ -10,6 +10,8 @@ class Tokenizer:
 
     # Regexs used identify tokens we know about
     lookupTable = {
+        "COLON": ":",
+        "COMMA": ",",
         "INT": "int",
         "FLOAT": "float",
         "REAL": "(\d.\d)+",
@@ -110,6 +112,14 @@ class Tokenizer:
             i += 1
             self.getTokens()
 
+    def get_tokens_from_file(self):
+        file = self.prompt_for_file_name()
+        test_strings = self.readfile(file)
+
+        for test in test_strings:
+            self.target_str = test
+            self.getTokens()
+
     def isIdToken(self, token):
         return token[:3] == "<ID"
 
@@ -139,23 +149,9 @@ class Tokenizer:
         print("\n")
 
     def prompt_for_file_name(self):
-        # self.filename = input("Enter File Name: ")
-        return "sample-input.txt"
+        return input("Enter File Name: ")
 
-    def readfile(self, fname):
-        with open(fname) as target_file:
+    def readfile(self, f):
+        with open(f) as target_file:
             return target_file.readlines()
 
-    def test_csci_475(self):
-        test_strings = self.readfile("sample-input.txt")
-
-        for test in test_strings:
-            self.target_str = test
-            self.getTokens()
-
-        self.print_pretty_tokens()
-        self.print_pretty_symbol_table()
-
-
-MR_T = Tokenizer()
-MR_T.test_csci_475()
