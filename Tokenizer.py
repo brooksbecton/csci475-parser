@@ -77,7 +77,6 @@ class Tokenizer:
     def getTokensCharByChar(self):
         i = 1
         while i <= len(self.target_str):
-
             test_str = self.target_str[:i]
 
 
@@ -113,8 +112,6 @@ class Tokenizer:
             self.getTokens()
 
     def get_tokens_from_file(self):
-        print(len(sys.argv))
-        print(sys.argv)
         if len(sys.argv) > 1:
             if  sys.argv[1]:
                 file = sys.argv[1]
